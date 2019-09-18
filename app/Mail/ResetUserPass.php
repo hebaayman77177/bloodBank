@@ -6,10 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ResetPass extends Mailable
+class ResetUserPass extends Mailable
 {
     use Queueable, SerializesModels;
-
     private $code;
 
     /**
@@ -29,6 +28,6 @@ class ResetPass extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.auth.reset',['code'=>$this->code]);
+        return $this->markdown('emails.auth.resetuser',['code'=>$this->code]);
     }
 }

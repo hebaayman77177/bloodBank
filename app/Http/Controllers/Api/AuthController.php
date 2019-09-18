@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
@@ -11,32 +9,27 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Token;
 
+use App\Shared\ApiHelper;
+
 class AuthController extends Controller
 {
 
-    private function apiResponse($data,$status=1,$message='success'){
-        $response=[
-            'status'=>$status,
-            'message'=>$message,
-            'data'=>$data
-        ];
-        return response()->json($response);
-    }
+   
 
     public function register(Request $request){
 
         $validator=validator()->make($request->all(),[
             'name'            =>'required',
             'password'        => "required",
-            'email'           => "required",
+            'email'           => "required|unique:clients",
             'date_of_birth'   => "required",
             'city_id'         => "required",
-            'phone'           => "required",
+            'phone'           => "required|unique:clients",
             'blood_type_id'      => "required|in:1,2,3,4,5,6"
         ]);
 
         if($validator->fails()){
-            return $this->apiResponse($validator->errors(),0,'fails');
+            return ApiHelper::apiResponse($validator->errors(),0,'fails');
         }
 
 
@@ -55,7 +48,7 @@ class AuthController extends Controller
             'phone'             =>$client->phone,
             'blood_type_id'     =>$client->blood_type_id
         ];
-        return $this->apiResponse([
+        return ApiHelper::apiResponse([
             'api_token'=>$client->api_token,
             'client'=>$responsClient
         ]);
@@ -69,10 +62,8 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->apiResponse($validator->errors(),0,'fails');
+            return ApiHelper::apiResponse($validator->errors(),0,'fails');
         }
-
-        $auth=Auth::guard('api')->validate($request->all());
 
         $client=Client::where('phone',$request->phone)->get()->first();
         
@@ -88,19 +79,19 @@ class AuthController extends Controller
                     'phone'             =>$client->phone,
                     'blood_type_id'     =>$client->blood_type_id
                 ];
-                return $this->apiResponse([
+                return ApiHelper::apiResponse([
                     'api_token'=>$client->api_token,
                     'client'=>$responsClient
                 ]);
             }else{
-                return $this->apiResponse([],0,'not correct data');
+                return ApiHelper::apiResponse([],0,'not correct data');
             }
         }else{
-            return $this->apiResponse([],0,'not correct data');
-        }
-        return $this->apiResponse($auth);        
+            return ApiHelper::apiResponse([],0,'not correct data');
+        }    
     }
 
+// TODO: //check 
     public function registerToken(Request $request){
 
         $validator=validator()->make($request->all(),[
@@ -109,13 +100,13 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->apiResponse($validator->errors(),0,'fails');
+            return ApiHelper::apiResponse($validator->errors(),0,'fails');
         }
 
        Token::where('token',$request->token)->delete();
 
        $request->user()->tokens()->create($request->all());
 
-       return $this->apiResponse([]);           
+       return ApiHelper::apiResponse([]);           
     }
 }

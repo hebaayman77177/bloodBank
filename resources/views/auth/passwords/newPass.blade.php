@@ -34,22 +34,21 @@
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Please enter the code sent to you </p>
-    <form method="POST" action="{{ url('/varifay-code') }}">
+    <p class="login-box-msg">Please enter your new password </p>
+    <form method="POST" action="{{ url('/update-pass') }}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="user_id" value="{{ $user_id }}">
+        <input type="hidden" name="user_id" value="{{$user_id}}">
         <div class="form-group row">
-            <label for="code" class="col-md-4 col-form-label text-md-right">Code</label>
+            <label for="code" class="col-md-4 col-form-label text-md-right">New password</label>
 
             <div class="col-md-6">
-                <input id="code" type="text" class="form-control" name="code" required  autofocus>
+                <input id="code" type="password" class="form-control" name="pass" required  autofocus>
             </div>
         </div>
-
         <div class="form-group row mb-0">
             <div class="col-md-8 offset-md-4">
                 <button type="submit" class="btn btn-primary">
-                    {{ __('Send') }}
+                   Save
                 </button>
             </div>
         </div>

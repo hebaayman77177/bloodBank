@@ -9,11 +9,8 @@ use App\Mail\ResetPass;
 use App\Models\Governorate;
 use App\Models\Article;
 use App\Models\Category;
-use App\Models\AC;
 use App\Models\BloodType;
 use App\Models\Client;
-use App\Models\Contact;
-use App\Models\bloodTypeClient;
 use App\Models\DonationRequest;
 use App\Models\Token;
 use App\Shared\ApiHelper;
@@ -28,6 +25,7 @@ class MainController extends Controller
         return ApiHelper::apiResponse($client);
     }
 
+    // without tokens
     public function governorates(){
         $governorates=Governorate::get();
         return ApiHelper::apiResponse($governorates);
@@ -50,6 +48,7 @@ class MainController extends Controller
         return ApiHelper::apiResponse($bloodTypes);
     }
 
+    // with tokens
     public function article(Request $request){
 
         $validator=validator()->make($request->all(),[
@@ -65,8 +64,7 @@ class MainController extends Controller
 
     public function articles(Request $request){
 
-        $articles=Article::where(function ($query) use($request){
-             //?$request->name:'')    
+        $articles=Article::where(function ($query) use($request){  
              if($request->has('name'))
              {
                 $query->where(function($query) use($request){
@@ -79,29 +77,8 @@ class MainController extends Controller
              {
                 $query->where('category_id', $request->category_id);
              }
-
-             // cat & (header || content)
-             // header || content & cat
         })->paginate(5);
         return ApiHelper::apiResponse($articles);
-        // ->paginate(5);
-
-        // if($id !='null'){
-        //     $article=Article::find($id);
-        //     return ApiHelper::apiResponse($article);
-        // }
-        // if($name !='null'){
-        //     $articles=Article::whereRaw('header LIKE ?',[$name])->get();
-        //     // return 'name';
-        //     return ApiHelper::apiResponse($articles);
-        // }
-        // if($category !='null'){
-        //     $cat=Category::where('name','like',$category)->get()->first(); 
-        //     $articles=$cat->articles()->get();
-        //     return ApiHelper::apiResponse($articles);
-        // }
-        // $articles=Article::all();
-        // return ApiHelper::apiResponse($articles);
     }
     
     public function categories(){
@@ -274,24 +251,5 @@ class MainController extends Controller
         return ApiHelper::apiResponse($data);
         
     }
-
-    // public function donationsGet(Request $request){
-    //     if($request->id !=null){
-    //         $donation=DonationRequest::find($request->id);
-    //         return ApiHelper::apiResponse($donation);
-    //     }
-    //     if($request->blood_type_id !=null){
-    //         $donations=DonationRequest::whereRaw('blood_type_id = ?',[$request->blood_type_id])->get();
-    //         return ApiHelper::apiResponse($donations);
-    //     }
-    //     if($request->governorate_id !=null){
-    //         $donations=DonationRequest::where('governorate_id',$request->governorate_id)->get(); 
-    //         return ApiHelper::apiResponse($donations);
-    //     }
-    //     $donations=DonationRequest::all();
-    //     return ApiHelper::apiResponse($donations);
-    // }
-
-    
 
 }

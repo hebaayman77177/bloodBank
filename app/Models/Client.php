@@ -27,10 +27,10 @@ class Client extends Authenticatable
         return ($def>3)?TRUE:FALSE;
     }
 
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password']=bcrypt($value);
-    }
+    // public function setPasswordAttribute($value)
+    // {
+    //     $this->attributes['password']=bcrypt($value);
+    // }
     
     public function contacts()
     {

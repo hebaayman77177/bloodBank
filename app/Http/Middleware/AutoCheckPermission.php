@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use App\Models\Permission;
 
 use Closure;
 
@@ -15,11 +16,12 @@ class AutoCheckPermission
      */
     public function handle($request, Closure $next)
     {
-        $routeName=$request()->route()->getName();
-        $permission=Permission::whereRaw('FIND_IN_SET'($routeName,'routes'))->first();
+        $routeName=$request->route()->getName();
+        // dd($routeName);
+        $permission=Permission::whereRaw("FIND_IN_SET('$routeName',routes)")->first();
         if($permission){
             if(!$request->user()->can($permission->name)){
-                return abort('code:403');
+                abort(403, 'Unauthorized action.');
             }
         }
         return $next($request);
